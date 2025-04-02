@@ -1,4 +1,5 @@
 from colnames import conversation
+import pandas as pd
 
 def unpack_turns(df,
                  conv_colname: str = conversation):
