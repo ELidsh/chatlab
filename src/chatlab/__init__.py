@@ -2,7 +2,7 @@
 
 __version__ = "0.1.0"
 
-from .concat_files import concat_files
+from .concat_files import concat_files, hello
 
 try:
     from .unpack_turns import unpack_turns

@@ -2,7 +2,7 @@ import pandas as pd
 import random
 from typing import Optional, Union, List, Tuple
 from .utils import apply_filters
-from colnames import conv_id
+from .colnames import conv_id
 
 
 def filter_subset(df: pd.DataFrame,

@@ -1,7 +1,5 @@
-from colnames import conversation
 import pandas as pd
-from typing import Optional, List
-
+from .colnames import conversation
 
 def unpack_turns(df: pd.DataFrame,
                  conv_colname: str = conversation) -> pd.DataFrame:

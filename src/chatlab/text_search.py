@@ -4,7 +4,7 @@ import re
 import warnings
 from typing import Union, List, Tuple
 from .utils import apply_filters
-from colnames import conv_id, message, turn_number
+from .colnames import conv_id, message, turn_number
 
 
 def search_text_matches(df: pd.DataFrame,

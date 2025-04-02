@@ -137,3 +137,6 @@ def concat_files(
         print(f"Concatenated DataFrame has {len(concatenated_df)} rows and {len(concatenated_df.columns)} columns.")
 
     return concatenated_df
+
+def hello():
+    print("Hello")
