@@ -1,8 +1,8 @@
 import pandas as pd
-from .colnames import conversation
+from .colnames import colnames
 
 def unpack_turns(df: pd.DataFrame,
-                 conv_colname: str = conversation) -> pd.DataFrame:
+                 conv_colname: str = colnames['conv']['conversation']) -> pd.DataFrame:
     """
     Unpacks conversation turns from a nested structure into separate rows.
 

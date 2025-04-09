@@ -2,12 +2,12 @@ import pandas as pd
 import random
 from typing import Optional, Union, List, Tuple
 from .utils import apply_filters
-from .colnames import conv_id
+from .colnames import colnames
 
 
 def filter_subset(df: pd.DataFrame,
                   return_all: bool = False,
-                  conv_id_colname: str = conv_id,
+                  conv_id_colname: str = colnames['conv']['conv_id'],
                   **kwargs) -> Union[str, List[str], None]:
     """
     Return conversation ID(s) from the DataFrame that match the filters.

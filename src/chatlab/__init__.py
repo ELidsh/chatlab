@@ -1,6 +1,7 @@
+#chatlab/__init__.py
 """ChatDataLab - blablabla"""
 
-__version__ = "0.1.0"
+__version__ = "0.1.4"
 
 from .concat_files import concat_files, hello
 
@@ -18,3 +19,6 @@ try:
     from .text_search import search_text_matches
 except Exception as e:
     print(f"Error importing text_search: {e}")
+
+
+from .visualization import visualize_conversation

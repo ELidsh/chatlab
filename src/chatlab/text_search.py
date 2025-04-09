@@ -4,7 +4,7 @@ import re
 import warnings
 from typing import Union, List, Tuple
 from .utils import apply_filters
-from .colnames import conv_id, message, turn_number
+from .colnames import colnames
 
 
 def search_text_matches(df: pd.DataFrame,
@@ -12,9 +12,9 @@ def search_text_matches(df: pd.DataFrame,
                         case_sensitive: bool = True,
                         regex: bool = False,
                         return_all: bool = False,
-                        conv_id_colname: str = conv_id,
-                        message_colname: str = message,
-                        turn_num_colname: str = turn_number,
+                        conv_id_colname: str = colnames['turn']['conv_id'],
+                        message_colname: str = colnames['turn']['message'],
+                        turn_num_colname: str = colnames['turn']['turn_number'],
                         verbose=True,
                         **kwargs) -> Union[List[str], Tuple[str, List[int]], None]:
     """

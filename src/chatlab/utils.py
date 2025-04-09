@@ -1,5 +1,10 @@
+#utils.py
 import pandas as pd
 from typing import Optional, Union, Tuple, Any
+import sys
+import os
+from pathlib import Path
+import importlib.resources
 
 
 def parse_range(range_input: Any) -> Tuple[Optional[float], Optional[float]]:
@@ -83,3 +88,24 @@ def apply_filters(df: pd.DataFrame, **kwargs) -> pd.DataFrame:
                 filtered_df = filtered_df[filtered_df[key] == value]
 
     return filtered_df
+
+
+
+def get_package_root() -> Path:
+    """Gets the root directory of the 'chatlab' package."""
+    # Assuming utils.py is directly inside chatlab
+    try:
+        # Use importlib.resources for robustness (Python 3.9+)
+        # For older versions, fallback logic might be needed
+        with importlib.resources.path('chatlab', '__init__.py') as p:
+            return p.parent
+    except Exception:
+        print("Warning: Could not reliably determine package root via importlib.resources. Falling back to __file__.", file=sys.stderr)
+        try:
+            # Fallback using __file__ (less reliable in some scenarios)
+            return Path(__file__).parent.resolve()
+        except NameError:
+            print("Warning: __file__ not defined. Using CWD. Asset loading might fail.", file=sys.stderr)
+            return Path(os.getcwd()).resolve()
+
+# Add other general utility functions here if needed...
