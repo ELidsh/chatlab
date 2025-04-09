@@ -64,7 +64,7 @@ def _process_single_conversation(
     Corrected timestamp/duration logic AND function calls.
     """
     # --- 1. Data Retrieval & Validation ---
-    print(f"\n[DEBUG] Processing conv_id: {conv_id}") # Keep DEBUG prints for now
+    #print(f"\n[DEBUG] Processing conv_id: {conv_id}") # Keep DEBUG prints for now
     conv_id_col = colnames['conv']['conv_id']
     timestamp_col = colnames['turn']['timestamp']
     role_col = colnames['turn']['role']
@@ -76,29 +76,29 @@ def _process_single_conversation(
     try:
         matching_rows = df.loc[df[conv_id_col] == conv_id]
         if len(matching_rows) == 0:
-            print(f"[DEBUG] Error: Conv ID '{conv_id}' not found in DataFrame.", file=sys.stderr) # Added debug context
+       #     print(f"[DEBUG] Error: Conv ID '{conv_id}' not found in DataFrame.", file=sys.stderr) # Added debug context
             return None
         row = matching_rows.iloc[0]
     except KeyError:
-        print(f"[DEBUG] Error: '{conv_id_col}' column missing in DataFrame.", file=sys.stderr) # Added debug context
+     #   print(f"[DEBUG] Error: '{conv_id_col}' column missing in DataFrame.", file=sys.stderr) # Added debug context
         return None
     except Exception as e:
-        print(f"[DEBUG] Error accessing row for '{conv_id}': {e}", file=sys.stderr) # Added debug context
+      #  print(f"[DEBUG] Error accessing row for '{conv_id}': {e}", file=sys.stderr) # Added debug context
         return None
 
     # --- 2. Load and Prepare Conversation Turns ---
     conversation_col = colnames['conv']['conversation']
     if conversation_col not in row.index:
-        print(f"[DEBUG] Error: '{conversation_col}' column missing in row for '{conv_id}'.", file=sys.stderr)
+     #   print(f"[DEBUG] Error: '{conversation_col}' column missing in row for '{conv_id}'.", file=sys.stderr)
         return None
 
     conversation_data = row[conversation_col]
-    print(f"[DEBUG] Raw conversation_data type for '{conv_id}': {type(conversation_data)}")
+   # print(f"[DEBUG] Raw conversation_data type for '{conv_id}': {type(conversation_data)}")
 
     try:
         # ... (existing null check logic) ...
         if pd.isna(conversation_data).any() if hasattr(conversation_data, 'any') else pd.isna(conversation_data):
-             print(f"[DEBUG] Error: '{conversation_col}' is null or empty for '{conv_id}'.", file=sys.stderr)
+      #       print(f"[DEBUG] Error: '{conversation_col}' is null or empty for '{conv_id}'.", file=sys.stderr)
              return None
     except Exception as e:
         print(f"[DEBUG] Warning: Could not reliably check for null/missing data in '{conversation_col}' for '{conv_id}': {e}", file=sys.stderr)
@@ -107,7 +107,7 @@ def _process_single_conversation(
     turns = None
     try:
         # --- Existing parsing logic ---
-        print(f"[DEBUG] Attempting to parse/convert conversation data...")
+      #  print(f"[DEBUG] Attempting to parse/convert conversation data...")
         if isinstance(conversation_data, str):
             print("[DEBUG] Data is string, trying json.loads...")
             try:
@@ -121,16 +121,16 @@ def _process_single_conversation(
                     print(f"[DEBUG] ast.literal_eval failed: {e_ast}", file=sys.stderr)
                     raise TypeError("Could not parse conversation string format.") from e_ast
         elif isinstance(conversation_data, list):
-            print("[DEBUG] Data is already a list.")
+          #  print("[DEBUG] Data is already a list.")
             turns = conversation_data
         elif hasattr(conversation_data, 'tolist'):
-            print("[DEBUG] Data has 'tolist' method, calling it...")
+          #  print("[DEBUG] Data has 'tolist' method, calling it...")
             turns = conversation_data.tolist()
         elif isinstance(conversation_data, np.ndarray):
-             print("[DEBUG] Data is numpy array, calling tolist()...")
+           #  print("[DEBUG] Data is numpy array, calling tolist()...")
              turns = conversation_data.tolist()
         else:
-            print(f"[DEBUG] Data type {type(conversation_data)} not explicitly handled, trying fallback...")
+           # print(f"[DEBUG] Data type {type(conversation_data)} not explicitly handled, trying fallback...")
             try:
                 turns_str = str(conversation_data)
                 turns = json.loads(turns_str)
@@ -143,7 +143,7 @@ def _process_single_conversation(
         if turns is None or not isinstance(turns, list) or not all(isinstance(t, dict) for t in turns):
            print(f"[DEBUG] Failed to get valid list of dicts for turns in {conv_id}.", file=sys.stderr)
            return None
-        print(f"[DEBUG] Successfully parsed/converted conversation data into list of {len(turns)} turns.")
+     #   print(f"[DEBUG] Successfully parsed/converted conversation data into list of {len(turns)} turns.")
 
     except Exception as e:
         print(f"[DEBUG] Error during conversation parsing/conversion for '{conv_id}': {e}", file=sys.stderr)
@@ -275,7 +275,7 @@ def _process_single_conversation(
     )
 
 
-    print(f"[DEBUG] Successfully processed and generated HTML for conv_id: {conv_id}")
+  #  print(f"[DEBUG] Successfully processed and generated HTML for conv_id: {conv_id}")
     return {
         'base_html': base_html,
         'annotation_html': annotation_html

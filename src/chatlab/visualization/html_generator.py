@@ -243,11 +243,8 @@ def _format_duration(start_time: Optional[datetime], end_time: Optional[datetime
     return f' ({", ".join(duration_parts)})' # Added space before parenthesis
 
 
-# chatlab/visualization/html_generator.py
-# ... (imports, get_metadata_html, _format_duration) ...
+# Fix for the get_full_grid_row_html function in html_generator.py
 
-# --- Updated get_full_grid_row_html function ---
-# --- Function with Placeholder Strategy + DEBUG ---
 def get_full_grid_row_html(
     turn: Dict[str, Any],
     turn_number: int,
@@ -337,15 +334,6 @@ def get_full_grid_row_html(
                  if i < len(split_by_ticks) - 1: is_code_segment = not is_code_segment
              html_output = "".join(processed_parts)
 
-
-        # === DEBUG PRINTS (Optional - Keep or Remove) ===
-        print("\n--- DEBUG ---")
-        print(f"Turn: {turn_number}, Role: {role}")
-        print("Code Blocks Found Keys:", list(code_blocks.keys()))
-        print("HTML Output Before Replacement:\n", repr(html_output))
-        print("--- END DEBUG ---")
-        # ================================================
-
         # Reinsert the escaped code blocks using the NEW placeholder
         final_content = html_output
         if code_blocks:
@@ -355,13 +343,11 @@ def get_full_grid_row_html(
                   placeholder_in_p = f"<p>{placeholder}</p>" # Check for markdown adding <p>
 
                   if placeholder_in_p in final_content:
-                       print(f"[DEBUG] Replacing '{placeholder}' inside <p> tags.")
                        final_content = final_content.replace(placeholder_in_p, formatted_code_block)
                   elif placeholder in final_content:
-                       print(f"[DEBUG] Replacing '{placeholder}' directly.")
                        final_content = final_content.replace(placeholder, formatted_code_block)
                   else:
-                       print(f"[DEBUG] Placeholder '{placeholder}' not found directly OR in <p> tags in html_output for replacement. Replacement failed.")
+                       print(f"Warning: Placeholder '{placeholder}' not found in html_output for replacement.")
 
     else:
         # User turn or Markdown library not available: Use basic escaping
@@ -378,7 +364,6 @@ def get_full_grid_row_html(
             if i < len(split_by_ticks) - 1:
                 is_code_segment = not is_code_segment
         final_content = "".join(processed_parts)
-
 
     # --- Avatar Source ---
     # Use .get for safer dictionary access
@@ -400,26 +385,21 @@ def get_full_grid_row_html(
 
     # --- Annotation Column / Final HTML structure ---
     if include_annotations:
-         return f'''
-        <div class="grid-col-message">
-            {turn_content_html}
-        </div>
-        <div class="grid-col-resizer"></div>
-        <div class="grid-col-annotation">
-            <div class="annotation-container">
-                 {'''''' }
+        return f'''
+            <div class="grid-col-message">
+                {turn_content_html}
             </div>
-        </div>
-        '''
+            <div class="grid-col-resizer"></div>
+            <div class="grid-col-annotation">
+                <div class="annotation-container">
+                    <button class="add-annotation-btn" title="Add annotation">+</button>
+                </div>
+            </div>
+            '''
     else:
         # Return only the message column content if annotations are off
         return f'<div class="grid-col-message">{turn_content_html}</div>'
 
-
-
-
-# chatlab/visualization/html_generator.py
-# ... (keep imports, get_metadata_html, _format_duration, get_full_grid_row_html) ...
 
 def generate_full_html(
         metadata_html: str,
@@ -427,7 +407,7 @@ def generate_full_html(
         theme: str = 'light',
         custom_css_content: Optional[str] = None,
         include_js: bool = True,
-        include_annotations: bool = True # Make sure this matches the call
+        include_annotations: bool = True
 ) -> str:
     """
     Generate the complete HTML document.
@@ -443,7 +423,7 @@ def generate_full_html(
     conv_metadata_css = """
     /* Styling for top-level conversation metadata box */
     .metadata {
-        padding: 15px; margin-bottom: 20px; border-radius: 8px;
+        padding: 15px; margin-bottom: 0; border-radius: 8px;
         font-family: sans-serif; /* Ensure consistent font */
         /* Background/border handled by theme CSS */
     }
@@ -464,17 +444,80 @@ def generate_full_html(
         # Styles for base_html mode (non-grid layout)
         layout_specific_css = """
         /* Override grid layout for base_html mode */
-        .conversation-grid { display: block !important; border: none !important; margin-top: 0 !important; }
+        .conversation-section { display: block !important; border: none !important; margin-top: 0 !important; }
         .grid-col-message { padding-left: 0 !important; padding-right: 0 !important; }
         /* Ensure turns have adequate spacing in block layout */
         .turn { margin-bottom: 15px !important; }
         """
     else:
-         # Styles needed for the annotation grid layout (might be empty if base CSS handles it)
-         layout_specific_css = """
-         /* Styles specific to when annotation grid is enabled, if any */
-         """
+        # Styles needed for the annotation grid layout
+        layout_specific_css = """
+         /* Styles specific to when annotation grid is enabled */
+         .conversation-section {
+             display: grid;
+             grid-template-columns: 1fr 5px 400px;
+             gap: 0 10px;
+             border: 1px solid var(--border-color);
+             border-radius: 8px;
+             position: relative;
+             overflow: visible;
+             padding: 10px;
+             margin-bottom: 0;
+         }
 
+         .chat-section {
+             border-top: none;
+             border-top-left-radius: 0;
+             border-top-right-radius: 0;
+         }
+
+         .info-section {
+             margin-bottom: 0;
+         }
+
+         /* Indentation and alignment */
+         .metadata-wrapper {
+             display: flex;
+             padding-left: 60px; /* Match chat bubble indentation (avatar + turn number + gap) */
+         }
+
+         /* Editable general observations */
+         .editable-observations {
+             height: 100%;
+             width: 100%;
+             border: 1px solid var(--border-color);
+             border-radius: 8px;
+             padding: 15px;
+             background-color: var(--background-color);
+             outline: none;
+             min-height: 3.5em;  /* Default height matching a one-line message */
+         }
+
+         .editable-observations:empty:before {
+             content: 'Click to add general observations...';
+             color: var(--placeholder-color);
+             font-style: italic;
+         }
+
+         .editable-observations:focus {
+             border-color: var(--focus-border-color);
+             box-shadow: 0 0 0 2px var(--focus-shadow-color);
+         }
+
+         /* Ensure consistent padding */
+         .grid-col-message {
+             padding-right: 15px; /* Fixed distance to slider */
+         }
+
+         .grid-col-annotation {
+             padding-left: 15px; /* Fixed distance from slider */
+         }
+
+         /* Ensure proper vertical spacing */
+         .metadata, .general-annotation {
+             margin-bottom: 0;
+         }
+         """
 
     # Combine main theme CSS with specific overrides/additions
     combined_css = f"""
@@ -483,10 +526,22 @@ def generate_full_html(
     {layout_specific_css}
     """
 
-    # Determine body class based on theme
-    body_class = f"{theme}-theme"
+    # Create the general annotation box HTML with editable content
+    general_annotation_html = ""
+    if include_annotations:
+        general_annotation_html = """
+        <div class="general-annotation">
+            <div class="section-header">General Observations</div>
+            <div class="editable-observations" id="general-observations" contenteditable="true"></div>
+        </div>
+        """
 
-    # Create full HTML structure
+    # Determine body class based on theme and annotation mode
+    body_class = f"{theme}-theme"
+    if include_annotations:
+        body_class += " annotation-active"
+
+    # Create HTML structure with two separate but aligned sections
     full_html = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -498,20 +553,26 @@ def generate_full_html(
     </style>
 </head>
 <body class="{body_class}">
-    {metadata_html} 
+    <div class="{'conversation-section info-section' if include_annotations else 'conversation-block'}">
+        <div class="grid-col-message">
+            <div class="metadata-wrapper">
+                {metadata_html}
+            </div>
+        </div>
 
+        {f'<div class="grid-col-resizer"></div>' if include_annotations else ''}
 
-    <div class="{'conversation-grid' if include_annotations else 'conversation-block'}">
-        {chat_rows_html} 
+        {f'<div class="grid-col-annotation">{general_annotation_html}</div>' if include_annotations else ''}
     </div>
 
-   
+    <div class="{'conversation-section chat-section' if include_annotations else 'conversation-block'}">
+        {chat_rows_html}
+    </div>
+
     {f'<div id="dragHandle" class="resizer-handle"></div>' if include_annotations else ''}
-   
+
     {f'<script>{js_content}</script>' if include_js and include_annotations else ''}
 </body>
 </html>'''
 
     return full_html
-
-# ... (rest of the file) ...

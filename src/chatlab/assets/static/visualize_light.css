@@ -2,52 +2,165 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 10px; line-height: 1.5; }
 
-/* Metadata Styling (Conversation Level) */
-.metadata { background-color: #e0e0e0; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; }
-.metadata h2 { margin-top: 0; font-size: 1.2em; color: #111; word-wrap: break-word; }
-.metadata p { margin: 5px 0; line-height: 1.4; display: block; }
-.metadata strong { color: #000; }
-.metadata hr.metadata-divider { border: 0; height: 1px; background-color: #ccc; margin: 15px 0; display: block; width: 100%; }
-.metadata em { font-style: italic; opacity: 0.85;}
-.metadata a { color: #4A90E2; text-decoration: none; }
-.metadata a:hover { text-decoration: underline; }
+/* CSS Variables for consistent theming */
+:root {
+    --border-color: #ccc;
+    --background-color: #e0e0e0;
+    --placeholder-color: #777;
+    --focus-border-color: #4A90E2;
+    --focus-shadow-color: rgba(74, 144, 226, 0.2);
+    --indicator-code: purple;
+    --indicator-toxic: red;
+    --indicator-pii: orange;
+    --turn-number-color: #888;
+    --message-user-bg: #d1e7fd;
+    --message-user-text: #052c65;
+    --message-assistant-bg: #e2e3e5;
+    --message-assistant-text: #383d41;
+    --annotation-btn-bg: #f0f0f0;
+    --annotation-btn-border: #ccc;
+    --annotation-btn-text: #555;
+    --annotation-btn-hover: #e0e0e0;
+    --resizer-color: #ccc;
+    --resizer-hover: #bbb;
+}
 
-/* Main Conversation Grid Layout (Annotations Enabled) */
-.conversation-grid {
+/* Conversation Section (Both info and chat) */
+.conversation-section {
     display: grid;
-    grid-template-columns: 1fr 5px 250px; /* Message | Resizer | Annotation */
+    grid-template-columns: 1fr 5px 400px; /* Message | Resizer | Annotation - Now 400px */
     gap: 0 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    margin-top: 15px;
+    padding: 10px;
     position: relative;
     overflow: visible;
 }
 
+.info-section {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.chat-section {
+    margin-top: 0;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 /* Grid Cells */
 .grid-col-message, .grid-col-resizer, .grid-col-annotation {
-    padding: 0; margin-bottom: 10px; align-self: start; min-width: 0;
+    padding: 0;
+    align-self: start;
+    min-width: 0;
 }
-.grid-col-message { padding-left: 10px; padding-right: 5px; position: relative; }
-.grid-col-annotation { padding-left: 5px; padding-right: 10px; position: relative; }
-.grid-col-resizer { padding: 0; }
+
+.grid-col-message {
+    padding-left: 0;
+    padding-right: 15px; /* Fixed distance from content to slider */
+}
+
+.grid-col-annotation {
+    padding-left: 15px; /* Fixed distance from slider to annotations */
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-col-resizer {
+    padding: 0;
+}
+
+/* Metadata Box - With proper indentation */
+.metadata-wrapper {
+    display: flex;
+    padding-left: 60px; /* Match the indentation of chat bubbles (avatar + number + gap) */
+    margin-bottom: 0;
+    height: 100%;
+}
+
+.metadata {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.metadata h2 { margin-top: 0; font-size: 1.2em; color: #111; word-wrap: break-word; }
+.metadata p { margin: 5px 0; line-height: 1.4; display: block; }
+.metadata strong { color: #000; }
+.metadata hr.metadata-divider { border: 0; height: 1px; background-color: var(--border-color); margin: 15px 0; display: block; width: 100%; }
+.metadata em { font-style: italic; opacity: 0.85;}
+.metadata a { color: #4A90E2; text-decoration: none; }
+.metadata a:hover { text-decoration: underline; }
+
+/* General Annotation Box */
+.general-annotation {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.section-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Editable General Observations */
+.editable-observations {
+    flex-grow: 1;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 3.5em; /* Default height matching a one-line message */
+    overflow-y: auto;
+    outline: none;
+    line-height: 1.5;
+}
+
+.editable-observations:empty:before {
+    content: 'Click to add general observations...';
+    color: var(--placeholder-color);
+    font-style: italic;
+}
+
+.editable-observations:focus {
+    border-color: var(--focus-border-color);
+    box-shadow: 0 0 0 2px var(--focus-shadow-color);
+}
 
 /* Resizer Handle */
 .resizer-handle {
-    position: absolute; top: 0; bottom: 0; width: 5px; background-color: #ccc;
-    border-left: 1px solid #bbb; border-right: 1px solid #bbb; cursor: col-resize;
-    z-index: 10; transition: background-color 0.2s ease;
+    position: fixed; /* Fixed position for full height */
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: var(--resizer-color);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    cursor: col-resize;
+    z-index: 10;
+    transition: background-color 0.2s ease;
+    height: 100vh; /* Full viewport height */
 }
-.resizer-handle:hover { background-color: #bbb; }
+.resizer-handle:hover { background-color: var(--resizer-hover); }
 #dragHandle { /* JS sets left position */ }
 
-/* === FINAL Turn Layout v6 === */
+/* === Turn Layout === */
 
-/* Turn Container - Use align-items: flex-start */
+/* Turn Container */
 .turn {
     display: flex;
     flex-direction: row;
-    align-items: flex-start; /* Align top of prefix with top of main-content */
+    align-items: flex-start;
     gap: 10px;
     width: 100%;
     margin-bottom: 10px;
@@ -57,15 +170,14 @@ body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 
 .turn-prefix {
     display: flex;
     flex-direction: row;
-    align-items: center; /* Vertically center number relative to avatar */
+    align-items: center;
     gap: 10px;
     flex-shrink: 0;
     margin-top: 1.5em;
-    /* No margin-top needed */
 }
 .turn-number {
     font-weight: bold;
-    color: #888; /* Light theme number color */
+    color: var(--turn-number-color);
     min-width: 20px;
     text-align: center;
     line-height: 1;
@@ -79,12 +191,11 @@ body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 
 
 /* Right part: Metadata and Message Bubble */
 .turn-main-content {
-    display: flex; /* Use flex for main content (optional, could be block) */
+    display: flex;
     flex-direction: column;
     flex-grow: 1;
     min-width: 0;
-    position: relative; /* Needed for absolute positioning of metadata */
-    /* No padding-top needed */
+    position: relative;
 }
 
 /* Metadata Row - Positioned absolutely */
@@ -110,16 +221,15 @@ body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 
 .indicator { font-weight: bold; margin-left: 4px; margin-right: 4px; pointer-events: auto; }
 .indicator:first-child { margin-left: 0; }
 .indicator:last-child { margin-right: 0; }
-.indicator-code { color: purple; }
-.indicator-toxic { color: red; }
-.indicator-pii { color: orange; }
+.indicator-code { color: var(--indicator-code); }
+.indicator-toxic { color: var(--indicator-toxic); }
+.indicator-pii { color: var(--indicator-pii); }
 
-/* Message Bubble - Add margin-top for metadata space */
+/* Message Bubble */
 .message-bubble {
-    padding: 9px 14px; /* Normal padding */
-    /* padding-top: 1.5em; Removed internal padding */
+    padding: 9px 14px;
     margin-top: 1.5em; /* Add margin matching metadata height */
-    border-radius: 15px; /* Applies to all corners */
+    border-radius: 15px;
     word-wrap: break-word;
     border: 1px solid transparent;
     line-height: 1.5;
@@ -132,59 +242,108 @@ body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 
 
 /* Role-specific bubble styling */
 .user .message-bubble {
-    background-color: #d1e7fd;
-    color: #052c65;
+    background-color: var(--message-user-bg);
+    color: var(--message-user-text);
 }
 .assistant .message-bubble {
-    background-color: #e2e3e5;
-    color: #383d41;
+    background-color: var(--message-assistant-bg);
+    color: var(--message-assistant-text);
 }
 
-/* === END FINAL Turn Layout v6 === */
-
-
-/* Annotation Area Styling */
+/* Annotation Area Styling - Light Theme */
 .annotation-container {
-    width: 100%; display: flex; flex-direction: column; align-items: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
-    /* Align annotation container top with bubble top */
-    /* It aligns with grid-col-annotation top, which aligns with grid-col-message top */
-    /* align-self: start should handle this via the grid */
-    /* Add padding if needed */
-     padding-top: 1.5em; /* Match bubble margin-top */
+    padding-top: 1.5em; /* Match bubble margin-top */
+    min-height: 50px;
 }
-/* ... Keep rest of annotation styles ... */
-.add-annotation-btn { /* ... */ }
-.add-annotation-btn:hover { /* ... */ }
-.add-annotation-btn:active { /* ... */ }
-.annotation-toolbar { /* ... */ }
-.annotation-toolbar button, .annotation-toolbar select { /* ... */ }
-.annotation-toolbar button:hover, .annotation-toolbar select:hover { /* ... */ }
-.annotation-toolbar button.active { /* ... */ }
-.annotation-toolbar select { /* ... */ }
-.annotation-toolbar select[data-command="hiliteColor"] option { /* ... */ }
-.annotation-toolbar select[data-command="hiliteColor"] option[value="transparent"] { /* ... */ }
-.delete-annotation-btn { /* ... */ }
-.delete-annotation-btn:hover { /* ... */ }
-.annotation-textbox { /* ... */ }
-.annotation-textbox:focus { /* ... */ }
-.annotation-textbox[contenteditable=true]:empty:before { /* ... */ }
-.annotation-textbox ul { /* ... */ }
-.annotation-textbox li { /* ... */ }
+
+.add-annotation-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--annotation-btn-bg);
+    border: 1px solid var(--annotation-btn-border);
+    color: var(--annotation-btn-text);
+    font-size: 18px;
+    line-height: 26px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-annotation-btn:hover {
+    background-color: var(--annotation-btn-hover);
+    transform: scale(1.1);
+}
+
+.add-annotation-btn:active {
+    background-color: #d0d0d0;
+    transform: scale(0.95);
+}
+
+/* Ensure grid-col-annotation aligns with each turn */
+.grid-col-annotation {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Override default body styling when annotation mode is active */
+body.annotation-active .conversation-section {
+    display: grid;
+}
+
+.annotation-toolbar { display: none; margin-bottom: 10px; padding: 5px; background: #f5f5f5; border-radius: 4px; }
+.annotation-toolbar button, .annotation-toolbar select {
+    padding: 2px 5px; margin-right: 5px; background: white; border: 1px solid #ddd; border-radius: 3px;
+    font-size: 12px; cursor: pointer;
+}
+.annotation-toolbar button:hover, .annotation-toolbar select:hover { background: #f0f0f0; }
+.annotation-toolbar button.active { background: #e6e6e6; border-color: #ccc; }
+.annotation-toolbar select { min-width: 70px; }
+.annotation-toolbar select option { font-size: 12px; }
+.annotation-toolbar select[data-command="hiliteColor"] option { padding: 2px 0 2px 20px; position: relative; }
+.annotation-toolbar select[data-command="hiliteColor"] option[value="transparent"] { background-color: transparent; }
+
+.delete-annotation-btn {
+    display: none; position: absolute; top: 5px; right: 5px; font-size: 14px;
+    border: none; background: none; cursor: pointer; color: #999;
+}
+.delete-annotation-btn:hover { color: #555; }
+
+.annotation-textbox {
+    display: none; width: 100%; min-height: 3em; padding: 8px; margin-top: 5px;
+    border: 1px solid #ddd; border-radius: 5px; background: white; color: #333;
+    font-size: 14px; line-height: 1.4;
+}
+.annotation-textbox:focus { border-color: #aaa; outline: none; }
+.annotation-textbox[contenteditable=true]:empty:before {
+    content: 'Add your annotation here...';
+    color: #999;
+    font-style: italic;
+}
+.annotation-textbox ul { margin-left: 20px; }
+.annotation-textbox li { margin-bottom: 5px; }
+
 .annotation-container.editing .add-annotation-btn { display: none; }
 .annotation-container.editing .annotation-textbox { display: block; }
 .annotation-container.editing .delete-annotation-btn { display: block; }
 .annotation-container.editing { align-items: flex-start; }
 
-
 /* Markdown Element Styling (Light Theme) */
-/* ... Keep all markdown styles ... */
-.message table { /* ... */ }
-.message th, .message td { /* ... */ }
-.message th { /* ... */ }
-.message pre { /* ... */ }
-.message code:not(pre code) { /* ... */ }
-.message pre code { /* ... */ }
+.message table { border-collapse: collapse; margin: 15px 0; width: 100%; }
+.message th, .message td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+.message th { background-color: #f2f2f2; font-weight: bold; }
+.message pre { background-color: #f5f5f5; padding: 10px; margin: 10px 0; overflow-x: auto; border-radius: 4px; }
+.message code:not(pre code) { background-color: #f0f0f0; padding: 2px 4px; border-radius: 3px; font-family: monospace; }
+.message pre code { background-color: transparent; padding: 0; }
+
 .message ul, .message ol {
     margin: 10px 0 10px 20px; /* Top/Bottom margin + Left Margin */
     padding-left: 15px;      /* Left Padding (adjust as needed for bullet position) */
@@ -202,13 +361,14 @@ body { font-family: sans-serif; background-color: #f4f4f4; color: #333; margin: 
 .message li {
     margin-bottom: 5px;
 }
-.message blockquote { /* ... */ }
-.message h1, .message h2, .message h3, .message h4, .message h5, .message h6 { /* ... */ }
-.message p { /* ... */ }
-.message p:last-child { /* ... */ }
+.message blockquote { border-left: 4px solid #ddd; padding-left: 15px; margin: 15px 0; color: #666; }
+.message h1, .message h2, .message h3, .message h4, .message h5, .message h6 { margin: 15px 0 10px; line-height: 1.2; }
+.message p { margin: 10px 0; }
+.message p:last-child { margin-bottom: 0; }
+.message p:first-child { margin-top: 0; }
 
 /* Styles for base_html mode (no annotations) */
-body:not(.annotation-active) .conversation-grid {
+body:not(.annotation-active) .conversation-section {
     display: block !important; border: none !important; margin-top: 0 !important; padding: 0 !important;
 }
 body:not(.annotation-active) .grid-col-message { padding-left: 0 !important; padding-right: 0 !important; }
