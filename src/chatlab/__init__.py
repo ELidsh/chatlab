@@ -22,3 +22,6 @@ except Exception as e:
 
 
 from .visualization import visualize_conversation
+
+# Alternative approach for main chatlab/__init__.py
+from .sample_data import load_sample_data as sample_data
