@@ -296,8 +296,9 @@ def visualize_conversation(
         save_mode: str = "base_html",
         display: bool = True,
         user_avatar_svg: Optional[str] = None,
-        assistant_avatar_svg: Optional[str] = None
-) -> None: # Return type is None
+        assistant_avatar_svg: Optional[str] = None,
+        tag: Optional[str] = None
+) -> None:  # Return type is None
     """
     Generates HTML visualization for conversations with options for display and saving.
     Includes turn-level metadata display.
@@ -329,6 +330,8 @@ def visualize_conversation(
         Custom SVG content for user avatar
     assistant_avatar_svg : str or None
         Custom SVG content for assistant avatar
+    tag : str or None
+        Optional tag to add to the end of the filename
 
     Returns:
     --------
@@ -361,7 +364,7 @@ def visualize_conversation(
     # --- Start: Define conv_ids based on input type ---
     conv_ids = []
     display_id = None
-    conv_id_col = colnames['conv']['conv_id'] # Get the standard column name
+    conv_id_col = colnames['conv']['conv_id']  # Get the standard column name
 
     if isinstance(conv_id, str):
         conv_ids = [conv_id]
@@ -382,13 +385,13 @@ def visualize_conversation(
         # Check if the series contains conv_ids (e.g., result of df[conv_id_col])
         # Or if it's a single value series intended as the ID
         if conv_id.name == conv_id_col or conv_id.dtype == 'object' or pd.api.types.is_string_dtype(conv_id.dtype):
-             conv_ids = conv_id.astype(str).unique().tolist()
+            conv_ids = conv_id.astype(str).unique().tolist()
         elif len(conv_id) == 1:
-             conv_ids = [str(conv_id.iloc[0])]
+            conv_ids = [str(conv_id.iloc[0])]
         else:
-             # Fallback or error if series content is ambiguous
-             print(f"Error: Could not reliably extract conversation ID(s) from the provided Series.", file=sys.stderr)
-             return None
+            # Fallback or error if series content is ambiguous
+            print(f"Error: Could not reliably extract conversation ID(s) from the provided Series.", file=sys.stderr)
+            return None
 
         if conv_ids:
             display_id = random.choice(conv_ids)
@@ -400,27 +403,27 @@ def visualize_conversation(
     # Now check if conv_ids was successfully populated
     if not conv_ids:
         print("Error: No valid conversation IDs found or extracted.", file=sys.stderr)
-        return None # Keep return None
+        return None  # Keep return None
 
     # Process all conversations
     processed_results = {}
     # Use the pre-selected display_id if needed later
-    actual_display_id = display_id # Store the randomly chosen ID if we need it for display
+    actual_display_id = display_id  # Store the randomly chosen ID if we need it for display
 
     for cid in conv_ids:
         # Call the updated processing function
         result = _process_single_conversation(
             df=df,
-            conv_id=str(cid), # Ensure cid is string for processing function
+            conv_id=str(cid),  # Ensure cid is string for processing function
             theme=theme,
             custom_css_path=custom_css_path,
-            save_mode=save_mode, # Pass save_mode down if needed by _process
+            save_mode=save_mode,  # Pass save_mode down if needed by _process
             user_avatar_svg=user_avatar_svg,
             assistant_avatar_svg=assistant_avatar_svg
         )
 
         if result:
-            processed_results[str(cid)] = result # Ensure dictionary keys are strings
+            processed_results[str(cid)] = result  # Ensure dictionary keys are strings
 
     # Handle display
     if display and actual_display_id and str(actual_display_id) in processed_results:
@@ -431,32 +434,51 @@ def visualize_conversation(
             ipython_display(HTML(html_content_to_display))
             # Add note about interactive features if saving annotation version
             if save_mode == "annotation" and save:
-                 print("NOTE: Interactive features (like annotations) will be available in the saved HTML file.")
+                print("NOTE: Interactive features (like annotations) will be available in the saved HTML file.")
         else:
             print("Warning: IPython is not installed. Cannot display HTML inline.", file=sys.stderr)
             print("You can save the HTML to a file using save=True or providing a save path.", file=sys.stderr)
     elif display:
-         print(f"Warning: Could not display conversation. Display ID '{actual_display_id}' not found in processed results.", file=sys.stderr)
-
+        print(
+            f"Warning: Could not display conversation. Display ID '{actual_display_id}' not found in processed results.",
+            file=sys.stderr)
 
     # Handle saving
     if save:
+        # Get theme and save mode tags for filename
+        theme_tag = "dark" if theme == "dark" else "light"
+        save_mode_tag = "annot" if save_mode == "annotation" else "static"
+
         saved_files = []
         for cid_str, result in processed_results.items():
             # Determine which HTML version to save
             html_to_save = result['annotation_html'] if save_mode == "annotation" else result['base_html']
 
-            # Determine filename based on save parameter
+            # Build filename with theme and save mode tags
+            filename_parts = [cid_str, theme_tag, save_mode_tag]
+
+            # Add user tag if provided
+            if tag is not None:
+                # Basic sanitization for tag
+                safe_tag = "".join(c if c.isalnum() or c in ('-', '_') else '_' for c in tag)
+                filename_parts.append(safe_tag)
+
+            # Combine parts with underscores
+            filename = "_".join(filename_parts) + ".html"
+
+            # If save is a string, use it as a filename part after sanitizing
             if isinstance(save, str):
-                # Basic sanitization for filename part from 'save'
-                safe_suffix = "".join(c if c.isalnum() or c in ('-', '_') else '_' for c in save)
-                filename = f"{cid_str}_{safe_suffix}.html"
-            else:
-                filename = f"{cid_str}.html"
+                # Basic sanitization for save string
+                safe_save = "".join(c if c.isalnum() or c in ('-', '_') else '_' for c in save)
+                # Insert save after cid but before theme/mode tags
+                filename_parts = [cid_str, safe_save, theme_tag, save_mode_tag]
+                if tag is not None:
+                    filename_parts.append(safe_tag)
+                filename = "_".join(filename_parts) + ".html"
 
             # Basic sanitization for filename part from cid_str
             safe_cid_str = "".join(c if c.isalnum() or c in ('-', '_') else '_' for c in cid_str)
-            filename = filename.replace(cid_str, safe_cid_str) # Replace original cid with sanitized one
+            filename = filename.replace(cid_str, safe_cid_str)  # Replace original cid with sanitized one
 
             save_filepath = save_dir_path / filename
 
@@ -474,9 +496,8 @@ def visualize_conversation(
                 print(f"Saved {len(saved_files)} files to {save_dir_path}")
             if save_mode == "annotation":
                 print("Note: Files saved with full annotation features.")
-        elif processed_results: # Only print error if we expected to save something
-             print("No files were saved due to errors. See above for details.")
-
+        elif processed_results:  # Only print error if we expected to save something
+            print("No files were saved due to errors. See above for details.")
 
     # Return None as per the function's design
     return None

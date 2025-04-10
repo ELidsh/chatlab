@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5798e0d6-4054-4f35-b189-7dbda0dade4e" name="Changes" comment="Visualization function included">
+    <list default="true" id="5798e0d6-4054-4f35-b189-7dbda0dade4e" name="Changes" comment="Experimental annotation mode added to visualization function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chatlab/assets/static/visualize.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chatlab/assets/static/visualize.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chatlab/assets/static/visualize_dark.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/chatlab/assets/static/visualize_dark.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chatlab/assets/static/visualize_light.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/chatlab/assets/static/visualize_light.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/chatlab/visualization/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/chatlab/visualization/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chatlab/visualization/html_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/chatlab/visualization/html_generator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/testing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/tests/testing.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +90,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743587328284</updated>
       <workItem from="1743587329328" duration="52339000" />
-      <workItem from="1744035955998" duration="45173000" />
+      <workItem from="1744035955998" duration="49248000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -168,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744200906629</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Experimental annotation mode added to visualization function">
+      <option name="closed" value="true" />
+      <created>1744210318873</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1744210318873</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,7 +181,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Visualization function included" />
-    <option name="LAST_COMMIT_MESSAGE" value="Visualization function included" />
+    <MESSAGE value="Experimental annotation mode added to visualization function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Experimental annotation mode added to visualization function" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/chatlab$testin.coverage" NAME="testin Coverage Results" MODIFIED="1743955223712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
