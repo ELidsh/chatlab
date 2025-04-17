@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5798e0d6-4054-4f35-b189-7dbda0dade4e" name="Changes" comment="Added sample data">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="5798e0d6-4054-4f35-b189-7dbda0dade4e" name="Changes" comment="Added new sample data">
       <change beforePath="$PROJECT_DIR$/src/chatlab/sample_data/samples/sample_data.parquet" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +90,7 @@
       <updated>1743587328284</updated>
       <workItem from="1743587329328" duration="52339000" />
       <workItem from="1744035955998" duration="57149000" />
-      <workItem from="1744799475983" duration="3714000" />
+      <workItem from="1744799475983" duration="4018000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -189,7 +188,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744280305356</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Added new sample data">
+      <option name="closed" value="true" />
+      <created>1744897867226</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744897867226</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,7 +208,8 @@
     <MESSAGE value="Experimental annotation mode added to visualization function" />
     <MESSAGE value="Updates file saving functionality: possible to tag files" />
     <MESSAGE value="Added sample data" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added sample data" />
+    <MESSAGE value="Added new sample data" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added new sample data" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/chatlab$testin.coverage" NAME="testin Coverage Results" MODIFIED="1743955223712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
